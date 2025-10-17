@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -11,18 +10,15 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
-      await login(form.email, form.password);
+      const userData = await login(form.email, form.password);
 
-      // Redirect based on role
-      const role = JSON.parse(atob(document.cookie.split(".")[1] || "null"))?.role;
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+      // 🔹 Redirect based on role
+      if (userData.role === "admin") navigate("/admin");
+      else navigate("/matches");
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed");
+      setError(err.message || "Login failed");
     }
   };
 
@@ -54,7 +50,7 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
           Login
         </button>
@@ -62,8 +58,3 @@ export default function Login() {
     </div>
   );
 }
-
-
-
-
-
